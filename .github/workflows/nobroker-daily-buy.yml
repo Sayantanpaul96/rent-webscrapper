@@ -9,6 +9,9 @@ jobs:
   run-daily-buy-scraper:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
