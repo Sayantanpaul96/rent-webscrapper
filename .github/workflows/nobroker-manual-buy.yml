@@ -15,10 +15,10 @@ on:
           - Harlur
         default: 'HSR_Layout'
       budget_limit:
-        description: 'Maximum Budget Value (Default: 1.7 Cr)'
+        description: 'Maximum Budget Value (Default: 2 Cr)'
         required: true
         type: string
-        default: '17000000'
+        default: '20000000'
 
 jobs:
   run-manual-buy-scraper:

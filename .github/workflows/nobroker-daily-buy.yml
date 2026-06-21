@@ -28,6 +28,8 @@ jobs:
         run: node buy-tracker.js
         env:
           RUN_MODE: "ALL"
+          TARGET_BHK: ${{ secrets.TARGET_BHK }}
+          MAX_PRICE: ${{ secrets.MAX_PRICE }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
 
