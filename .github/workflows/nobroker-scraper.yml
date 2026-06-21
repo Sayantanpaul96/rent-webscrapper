@@ -1,0 +1,67 @@
+name: NoBroker Real Estate Notifier
+
+on:
+  workflow_dispatch:
+    inputs:
+      search_mode:
+        description: 'Select Operation Mode'
+        required: true
+        type: choice
+        options:
+          - rent
+          - buy
+        default: 'rent'
+      locality:
+        description: 'Target Location Zone'
+        required: true
+        type: choice
+        options:
+          - HSR_Layout
+          - Indiranagar
+          - Koramangala
+          - Whitefield
+          - Electronic_City
+          - Jayanagar
+        default: 'HSR_Layout'
+      budget_limit:
+        description: 'Maximum Budget Value (Absolute Amount: e.g., 40000 for rent or 15000000 for buying)'
+        required: true
+        type: string
+        default: '40000'
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System and Project Dependencies
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Execute Rental Engine Workflow
+        if: ${{ github.event.inputs.search_mode == 'rent' }}
+        run: node rent-tracker.js
+        env:
+          TARGET_LOCALITY: ${{ github.event.inputs.locality }}
+          MAX_PRICE: ${{ github.event.inputs.budget_limit }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+      - name: Execute Purchase Engine Workflow
+        if: ${{ github.event.inputs.search_mode == 'buy' }}
+        run: node buy-tracker.js
+        env:
+          TARGET_LOCALITY: ${{ github.event.inputs.locality }}
+          MAX_PRICE: ${{ github.event.inputs.budget_limit }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}

@@ -1,0 +1,55 @@
+name: NoBroker Manual Buy Check (Specific Area)
+
+on:
+  workflow_dispatch:
+    inputs:
+      locality:
+        description: 'Select Locality to Check Right Now'
+        required: true
+        type: choice
+        options:
+          - Indiranagar
+          - JP_Nagar
+          - HSR_Layout
+          - Koramangala
+          - Harlur
+        default: 'HSR_Layout'
+      budget_limit:
+        description: 'Maximum Budget Value (Default: 1.7 Cr)'
+        required: true
+        type: string
+        default: '17000000'
+
+jobs:
+  run-manual-buy-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System and Project Dependencies
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Execute Purchase Engine Workflow
+        run: node buy-tracker.js
+        env:
+          RUN_MODE: "SINGLE"
+          TARGET_LOCALITY: ${{ github.event.inputs.locality }}
+          MAX_PRICE: ${{ github.event.inputs.budget_limit }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+      - name: Commit and Push Updated Cache File
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Manual run cache update [skip ci]"
+          file_pattern: 'seen_purchases.json'

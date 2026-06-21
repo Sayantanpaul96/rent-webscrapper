@@ -1,0 +1,38 @@
+name: NoBroker Daily Buy Notifier (All Areas)
+
+on:
+  schedule:
+    # Runs exactly at 03:30 UTC (9:00 AM IST) every single day
+    - cron: '30 3 * * *'
+
+jobs:
+  run-daily-buy-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System and Project Dependencies
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Execute Purchase Engine Workflow
+        run: node buy-tracker.js
+        env:
+          RUN_MODE: "ALL"
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+      - name: Commit and Push Updated Cache File
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Daily automated cache update [skip ci]"
+          file_pattern: 'seen_purchases.json'

@@ -1,0 +1,52 @@
+name: NoBroker Rent Notifier
+
+on:
+  workflow_dispatch:
+    inputs:
+      locality:
+        description: 'Target Rental Location'
+        required: true
+        type: choice
+        options:
+          - HSR_Layout
+          - Indiranagar
+          - Koramangala
+        default: 'HSR_Layout'
+      budget_limit:
+        description: 'Maximum Monthly Rent (e.g., 40000)'
+        required: true
+        type: string
+        default: '40000'
+
+jobs:
+  run-rental-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install System and Project Dependencies
+        run: |
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+
+      - name: Execute Rental Engine Workflow
+        run: node rent-tracker.js
+        env:
+          TARGET_LOCALITY: ${{ github.event.inputs.locality }}
+          MAX_PRICE: ${{ github.event.inputs.budget_limit }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+
+      - name: Commit and Push Updated Cache Files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 Rental cache updated [skip ci]"
+          file_pattern: 'seen_rentals.json'
