@@ -32,8 +32,8 @@ jobs:
         run: node buy-tracker.js
         env:
           RUN_MODE: "ALL"
-          TARGET_BHK: "3"               # <-- 3. Changed to safe plaintext strings
-          MAX_PRICE: "17000000"         # (There is no security risk in a budget)
+          TARGET_BHK: ${{ secrets.TARGET_BHK }}               # <-- 3. Changed to safe plaintext strings
+          MAX_PRICE: ${{ secrets.MAX_PRICE }}         # (There is no security risk in a budget)
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
 
