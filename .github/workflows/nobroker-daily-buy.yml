@@ -4,6 +4,7 @@ on:
   schedule:
     # Runs exactly at 03:30 UTC (9:00 AM IST) every single day
     - cron: '30 3 * * *'
+  workflow_dispatch: # <-- 1. Added back so the manual test button appears!
 
 jobs:
   run-daily-buy-scraper:
@@ -19,7 +20,7 @@ jobs:
       - name: Set Up Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24' # <-- 2. Bumped to 24 to kill the yellow warning
           cache: 'npm'
 
       - name: Install System and Project Dependencies
@@ -31,8 +32,8 @@ jobs:
         run: node buy-tracker.js
         env:
           RUN_MODE: "ALL"
-          TARGET_BHK: ${{ secrets.TARGET_BHK }}
-          MAX_PRICE: ${{ secrets.MAX_PRICE }}
+          TARGET_BHK: "3"               # <-- 3. Changed to safe plaintext strings
+          MAX_PRICE: "17000000"         # (There is no security risk in a budget)
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
 
