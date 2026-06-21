@@ -16,7 +16,7 @@ const CACHE_FILE = 'seen_purchases.json';
 
 const RUN_MODE = process.env.RUN_MODE || "ALL"; 
 const TARGET_LOCALITY = process.env.TARGET_LOCALITY || "HSR_Layout";
-const MAX_PRICE = process.env.MAX_PRICE || "17000000"; 
+const MAX_PRICE = process.env.MAX_PRICE || "25000000"; 
 const TARGET_BHK = process.env.TARGET_BHK || "3"; // Explicit BHK parameter
 
 async function loadSeenPurchases() {
