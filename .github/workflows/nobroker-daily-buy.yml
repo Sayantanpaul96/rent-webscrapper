@@ -2,8 +2,8 @@ name: NoBroker Daily Buy Notifier (All Areas)
 
 on:
   schedule:
-    # Runs exactly at 03:30 UTC (9:00 AM IST) from monday to friday
-    - cron: '30 3 * * 1-5'
+    # Runs exactly at 03:30 UTC (9:00 AM IST) everyday
+    - cron: '30 3 * * *'
   workflow_dispatch: # <-- 1. Added back so the manual test button appears!
 
 jobs:
@@ -16,7 +16,14 @@ jobs:
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
-
+        
+      - name: Probability
+        run: |
+          if [ $((RANDOM % 100)) -ge 60 ]; then
+          echo "Skipping run"
+          exit 0
+          fi
+          
       - name: Set Up Node.js Environment
         uses: actions/setup-node@v4
         with:
