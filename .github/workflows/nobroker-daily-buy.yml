@@ -3,7 +3,7 @@ name: NoBroker Daily Buy Notifier (All Areas)
 on:
   schedule:
     # Runs exactly at 03:30 UTC (9:00 AM IST) every single day
-    - cron: '30 3 * * *'
+    - cron: '30 3 * * 1-5'
   workflow_dispatch: # <-- 1. Added back so the manual test button appears!
 
 jobs:
