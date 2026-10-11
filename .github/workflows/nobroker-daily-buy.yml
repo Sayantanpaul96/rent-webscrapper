@@ -19,7 +19,7 @@ jobs:
         
       - name: Probability
         run: |
-          if [ $((RANDOM % 100)) -ge 60 ]; then
+          if [ $((RANDOM % 100)) -ge 50 ]; then
           echo "Skipping run"
           exit 0
           fi
